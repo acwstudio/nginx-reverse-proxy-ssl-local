@@ -12,6 +12,6 @@ You should have:
 - Docker version 17.12.0+, and Compose version 1.21.0+.
 - mkcert (valid https certificates for localhost)
 ## Folders and files
-
+![logo](https://drive.google.com/open?id=1GoQjSjBTg2GRXMbptNsc6yMpFaxC0YFb)
 
 

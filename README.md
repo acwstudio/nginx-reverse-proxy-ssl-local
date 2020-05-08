@@ -13,9 +13,7 @@ You should have:
 - mkcert (valid https certificates for localhost)
 ## Folders and files
 
-```html
-    <img src="nginx-reverse-proxy.png"/>
-```
+![revers](https://github.com/acwstudio/nginx-reverse-proxy/blob/master/nginx-reverse-proxy.png?raw=true)
 
 
 

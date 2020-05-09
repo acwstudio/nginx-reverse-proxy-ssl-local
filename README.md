@@ -6,6 +6,7 @@ You can have on localhost:
 1. Multiple services (apps, sites) by local domains
 2. SSL certificates 
 3. Docker container Nginx
+4. **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
 ## Host computer requirements
 You should have:
 - OS Linux (when using other systems, there may be nuances, but I'm not sure)
@@ -48,7 +49,7 @@ The general config file is a **etc/nginx/nginx.conf**. The most important string
 include /etc/nginx/conf.d/sites-enabled/*.conf;
 ```
 The string includes config files from **sites-enabled** folder. Let's go to the folder. The folder consists
-symlinks to the config files from **sites-availabel** folder. These files consist blocks to forward request 
+symlinks to the config files from **sites-availabel** folder. These files consist of blocks to forward request 
 to my services (apps, sites). Each service (app, site) has own config file and I named them like their local 
 domain names. For example, I have the laravel-docker.local, so config file, I named **laravel-docker.conf**.
 The file has strings to include files with repeated blocks:
@@ -56,5 +57,18 @@ The file has strings to include files with repeated blocks:
 include       /etc/nginx/conf.d/common.conf;
 include       /etc/nginx/conf.d/ssl.conf;
 -------
-include     /etc/nginx/conf.d/common_location.conf;
+include       /etc/nginx/conf.d/common_location.conf;
 ``` 
+So all files are included step by step into a **nginx.conf** general file. Now we must provide SSL certificates.
+I use **mkcert** tool to generate SSL certificats. Here is tutorial to install **mkcert** 
+https://kifarunix.com/how-to-create-self-signed-ssl-certificate-with-mkcert-on-ubuntu-18-04/
+Go to **etc/ssl/private/** and run in terminal
+```bash
+mkcert localhost asp.local laravel-docker.local
+```
+The **mkcert** has generated two files **localhost+2-key.pem** and **localhost+2.pem**. The files are SSL 
+certificates for localhost (+2 domains), asp.local, laravel-docker.local.
+
+Now our revers proxy is working with HTTPS protocol. But if you use HTTP, then begin to work **redirect.conf** 
+file. The file redirects HTTP to HTTPS.
+

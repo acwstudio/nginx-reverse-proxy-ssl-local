@@ -6,12 +6,27 @@ You can have on localhost:
 1. Multiple services (apps, sites) by local domains
 2. SSL certificates 
 3. Docker container Nginx
-4. **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
 ## Host computer requirements
 You should have:
 - OS Linux (when using other systems, there may be nuances, but I'm not sure)
 - Docker version 17.12.0+, and Compose version 1.21.0+.
 - mkcert (valid https certificates for localhost)
+- your own services (instead my asp.local and laravel-docker.local) behind reverse proxy
+- **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
+## Quick start
+```bash
+git clone git@github.com:acwstudio/nginx-reverse-proxy.git revers
+cd ~/projects/reverse/
+docker-compose up -d
+```
+Set network connection between the revers proxy container and your service containers
+Create own config files instead **asp.conf** and **laravel-docker.conf**
+For example, docker containers of the service **asp.local** have **dev_asp-network** network, 
+So I have to connect my **reverse** container to **dev_asp-network** network and run in a terminal
+```bash
+docker network connect dev_asp-network reverse
+```
+It needed to do for each your service.
 ## What is a reverse proxy
 Let's start with the concept of a reverse proxy. A reverse proxy server is a server that sits in front 
 of multiple web servers of apps, sites and services and forwards client requests to those web servers. Let say
@@ -67,7 +82,7 @@ Go to **etc/ssl/private/** and run in terminal
 mkcert localhost asp.local laravel-docker.local
 ```
 The **mkcert** has generated two files **localhost+2-key.pem** and **localhost+2.pem**. The files are SSL 
-certificates for localhost (+2 domains), asp.local, laravel-docker.local.
+certificates for **localhost** (+2 domains **asp.local**, **laravel-docker.local**).
 
 Now our revers proxy is working with HTTPS protocol. But if you use HTTP, then begin to work **redirect.conf** 
 file. The file redirects HTTP to HTTPS.

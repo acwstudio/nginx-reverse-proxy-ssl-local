@@ -19,14 +19,16 @@ git clone git@github.com:acwstudio/nginx-reverse-proxy.git revers
 cd ~/projects/reverse/
 docker-compose up -d
 ```
-Set network connection between the revers proxy container and your service containers
-Create own config files instead **asp.conf** and **laravel-docker.conf**
+Set network connection between the revers proxy container and your service containers.
+
+Create own config files instead **asp.conf** and **laravel-docker.conf**.
+
 For example, docker containers of the service **asp.local** have **dev_asp-network** network, 
 So I have to connect my **reverse** container to **dev_asp-network** network and run in a terminal
 ```bash
 docker network connect dev_asp-network reverse
 ```
-It needed to do for each your service.
+It needed to do for each your service network.
 ## What is a reverse proxy
 Let's start with the concept of a reverse proxy. A reverse proxy server is a server that sits in front 
 of multiple web servers of apps, sites and services and forwards client requests to those web servers. Let say
@@ -59,7 +61,7 @@ files:
 - common_location.conf
 - ssl.conf
 
-The general config file is a **etc/nginx/nginx.conf**. The most important string is 
+The general config file is a **etc/nginx/nginx.conf**. The most important string here is 
 ```nginx
 include /etc/nginx/conf.d/sites-enabled/*.conf;
 ```
@@ -86,4 +88,3 @@ certificates for **localhost** (+2 domains **asp.local**, **laravel-docker.local
 
 Now our revers proxy is working with HTTPS protocol. But if you use HTTP, then begin to work **redirect.conf** 
 file. The file redirects HTTP to HTTPS.
-

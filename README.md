@@ -50,7 +50,7 @@ just **reverse**
 
 Our **docker-compose.yml** file defines and runs the nginx reverse proxy. Let's look at the 
 **docker-compose.yml**. I use Nginx image from DockerHub to create a docker container. The nginx reverse proxy
-listen tipical ports:"80" and "443". Config files forward from host to container by volumes. SSL certificates 
+listens tipical ports:"80" and "443". Config files forward from host to container by volumes. SSL certificates 
 forward from host to container by volumes too.
 
 Let's look at config files. A whole config file was broken down into parts. It was made to select reused 

@@ -13,3 +13,11 @@ services:
       - ./etc/nginx/conf.d/:/etc/nginx/conf.d
       - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./etc/ssl/private/:/etc/ssl/private
+    networks:
+      - MyApp_net
+      - dev_asp-network
+networks:
+  MyApp_net:
+    external: true
+  dev_asp-network:
+    external: true

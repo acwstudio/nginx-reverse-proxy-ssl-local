@@ -60,7 +60,7 @@ provide a HTTPS protocol and localhost SSL certificates
 Look at these folders and files. I didn't want to deal with the long name **nginx-revers-proxy** and renamed it 
 just **reverse**
 
-![revers](https://github.com/acwstudio/nginx-reverse-proxy/blob/master/nginx-reverse-proxy.png?raw=true)
+![revers](https://github.com/acwstudio/nginx-reverse-proxy_0/blob/master/nginx-reverse-proxy_0.png?raw=true)
 
 Our **docker-compose.yml** file defines and runs the nginx reverse proxy. Let's look at the 
 **docker-compose.yml**. I use Nginx image from DockerHub to create a docker container. The nginx reverse proxy

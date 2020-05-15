@@ -5,7 +5,7 @@ services:
     container_name: reverse
     hostname: reverse
     restart: always
-    image: nginx
+    image: nginx:alpine
     ports:
       - 80:80
       - 443:443

@@ -1,24 +1,27 @@
 # nginx-reverse-proxy project
-Multiple local domains on localhost through nginx reverse proxy, SSL certificates (mkcert) and Docker
+Multiple local domains on localhost through nginx reverse proxy, SSL certificates (mkcert) with Docker
 ## Introduction
 Set up an easy and secure reverse proxy with Docker, Nginx & local ssl sertificate.
 You can have on localhost:
 1. Multiple services (apps, sites) by local domains
-2. SSL certificates 
-3. Docker container Nginx
+2. SSL certificates for localhost
+3. Docker container Nginx revers proxy
 ## Host computer requirements
 You should have:
 - OS Linux (when using other systems, there may be nuances, but I'm not sure)
-- Docker version 17.12.0+, and Compose version 1.21.0+.
+- Docker version 19.03.0+, and Compose version 1.25.0+.
 - mkcert (valid https certificates for localhost)
-- your own services (instead my asp.local and laravel-docker.local) behind reverse proxy
+- your own services behind reverse proxy
 - **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
 ## Quick start
 ```bash
-git clone git@github.com:acwstudio/nginx-reverse-proxy.git revers
-cd ~/projects/reverse/
+# clone the project
+git clone git@github.com:acwstudio/nginx-reverse-proxy.git
+cd ~/projects/nginx-reverse-proxy/
 docker-compose up -d
 ```
+
+
 The **docker-compose.yml** provides connection between reverse service and **asp_nginx_dev**, **MyApp-nginx**
 services.
 ```dockerfile

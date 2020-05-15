@@ -13,13 +13,21 @@ You should have:
 - mkcert (valid https certificates for localhost)
 - your own services behind reverse proxy
 - **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
-## Quick start
+## Let's start
 ```bash
 # clone the project
-git clone git@github.com:acwstudio/nginx-reverse-proxy.git
-cd ~/projects/nginx-reverse-proxy/
-docker-compose up -d
+$ git clone git@github.com:acwstudio/nginx-reverse-proxy.git
+$ cd ~/projects/nginx-reverse-proxy/
+$ docker-compose up -d
 ```
+Right now you have the structure
+
+![revers0](https://github.com/acwstudio/nginx-reverse-proxy/blob/master/nginx-reverse-proxy_0.png?raw=true)
+
+
+
+
+
 
 
 The **docker-compose.yml** provides connection between reverse service and **asp_nginx_dev**, **MyApp-nginx**
@@ -59,8 +67,6 @@ provide a HTTPS protocol and localhost SSL certificates
 ## How is it working
 Look at these folders and files. I didn't want to deal with the long name **nginx-revers-proxy** and renamed it 
 just **reverse**
-
-![revers](https://github.com/acwstudio/nginx-reverse-proxy_0/blob/master/nginx-reverse-proxy_0.png?raw=true)
 
 Our **docker-compose.yml** file defines and runs the nginx reverse proxy. Let's look at the 
 **docker-compose.yml**. I use Nginx image from DockerHub to create a docker container. The nginx reverse proxy

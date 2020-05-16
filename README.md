@@ -110,4 +110,12 @@ $ cd ~/projects/nginx-reverse-proxy/etc/ssl/private
 # include all of needed local domains (/etc/hosts)
 $ mkcert localhost myapp_1.local myapp_2 127.0.0.1 :: 1
 ```
+Then edit two strings **etc/nginx/conf.d/ssl.conf** file
+```nginx
+#...........
+ssl_certificate        /etc/ssl/private/name_your_certificate.pem;
+ssl_certificate_key    /etc/ssl/private/name_your_certificate-key.pem;
+#...........
+```
+
 Type in your browser http://myapp_1.local.

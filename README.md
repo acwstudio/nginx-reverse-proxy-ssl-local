@@ -11,7 +11,7 @@ You should have:
 - OS Linux (when using other systems, there may be nuances, but I'm not sure)
 - Docker version 19.03.0+, and Compose version 1.25.0+.
 - mkcert (valid https certificates for localhost)
-- your own services behind reverse proxy
+- your own services (apps, sites) behind reverse proxy
 - **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
 ## Let's start
 Clone the project
@@ -52,7 +52,7 @@ networks:
     external: true
 ```
 
-> **reverse-net** network is external. You have to use it in your nginx services are behind the proxy.
+> **reverse-net** network is external. You have to use it in your nginx services behind the proxy.
 
 - **etc/nginx/nginx.conf** file is a root config one. 
 
@@ -75,10 +75,11 @@ application behind the proxy. You nave to create them. They have strings to incl
     * **etc/nginx/conf.d/common_location.conf**, 
     * **etc/nginx/conf.d/ssl.conf**
 
+These files contain repeated blocks. You just each time include them, look at below
 ```nginx
 # config file to redirect request (myapp_1.conf)
 
-# name upstream block as you like, I named example
+# name upstream block as you like, I named myapp_1
 upstream myapp_1 {
   # server is a nginx container name of your myapp_1
   server        myapp_1_nginx;
@@ -98,48 +99,15 @@ server {
   }
 }
 ```
+- **etc/nginx/conf.d/redirect.conf** is config block listens the 80 port and redirects all request to the 443 port 
+https protocol.
 
-
-## What is a reverse proxy
-Let's start with the concept of a reverse proxy. A reverse proxy server is a server that sits in front 
-of multiple web servers of apps, sites and services and forwards client requests to those web servers. Let say
-we have three sites and each site has local domain name 
-- site-1.local 
-- site-2.local 
-- site_3.local
-
-For example, you send from your browser a request of **site_1.local** and reverse proxy forwards the request to 
-the appropriate web server, then return answer to your browser. Next time you send a request of 
-**site_2.local** and reverse proxy forwards the request to different appropriate web server. Reverse proxy can 
-provide a HTTPS protocol and localhost SSL certificates
-
-
-- ssl.conf
-
-The general config file is a **etc/nginx/nginx.conf**. The most important string here is 
-```nginx
-include /etc/nginx/conf.d/sites-enabled/*.conf;
-```
-The string includes config files from **sites-enabled** folder. Let's go to the folder. The folder consists
-symlinks to the config files from **sites-availabel** folder. These files consist of blocks to forward request 
-to my services (apps, sites). Each service (app, site) has own config file and I named them like their local 
-domain names. For example, I have the laravel-docker.local, so config file, I named **laravel-docker.conf**.
-The file has strings to include files with repeated blocks:
-```nginx
-include       /etc/nginx/conf.d/common.conf;
-include       /etc/nginx/conf.d/ssl.conf;
--------
-include       /etc/nginx/conf.d/common_location.conf;
-``` 
-So all files are included step by step into a **nginx.conf** general file. Now we must provide SSL certificates.
-I use **mkcert** tool to generate SSL certificats. Here is tutorial to install **mkcert** 
-https://kifarunix.com/how-to-create-self-signed-ssl-certificate-with-mkcert-on-ubuntu-18-04/
-Go to **etc/ssl/private/** and run in terminal
+- **etc/ssl/private/** is place to put SSL certificates. To create certificates, you need to use
+[mkcert](http://brain.nohau.ru/doku.php?id=create-locally-trusted-ssl-certificates). Before generation the local 
+certificates, go to **etc/ssl/private/** to put them just in right place.
 ```bash
-mkcert localhost asp.local laravel-docker.local
+$ cd ~/projects/nginx-reverse-proxy/etc/ssl/private
+# include all of needed local domains (/etc/hosts)
+$ mkcert localhost myapp_1.local myapp_2 127.0.0.1 :: 1
 ```
-The **mkcert** has generated two files **localhost+2-key.pem** and **localhost+2.pem**. The files are SSL 
-certificates for **localhost** (+2 domains **asp.local**, **laravel-docker.local**).
-
-Now our revers proxy is working with HTTPS protocol. But if you use HTTP, then begin to work **redirect.conf** 
-file. The file redirects HTTP to HTTPS.
+Type in your browser http://myapp_1.local.

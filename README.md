@@ -14,43 +14,92 @@ You should have:
 - your own services behind reverse proxy
 - **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
 ## Let's start
+Clone the project
 ```bash
-# clone the project
+$ mkdir ~/projects
+$ cd ~/projects/
 $ git clone git@github.com:acwstudio/nginx-reverse-proxy.git
 $ cd ~/projects/nginx-reverse-proxy/
-$ docker-compose up -d
 ```
-Right now you have the structure
+Right now you have the structure. Look at this!
 
 ![revers0](https://github.com/acwstudio/nginx-reverse-proxy/blob/master/nginx-reverse-proxy_0.png?raw=true)
 
+- **docker-compose.yml** file defines and runs multi-container Docker applications.
 
-
-
-
-
-
-The **docker-compose.yml** provides connection between reverse service and **asp_nginx_dev**, **MyApp-nginx**
-services.
-```dockerfile
-version: '3'
+```yaml
+version: '3.7'
 
 services:
   reverse:
     container_name: reverse
-    ...
-    networks:           <--
-      - MyApp_net       <-- network name of **MyApp_nginx**
-      - dev_asp-network <-- network name of **asp_nginx_dev**
-networks:               <--
-  MyApp_net:            <--
-    external: true      <--
-  dev_asp-network:      <--
-    external: true      <--
-```
-Create own config files instead **asp.conf** and **laravel-docker.conf**.
+    hostname: reverse
+    restart: always
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./etc/nginx/conf.d/:/etc/nginx/conf.d
+      - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./etc/ssl/private/:/etc/ssl/private
+    networks:
+      reverse-net:
 
-It needed to do for each your service network.
+networks:
+  reverse-net:
+    # the network provides connection to your services behind the proxy
+    external: true
+```
+
+> **reverse-net** network is external. You have to use it in your nginx services are behind the proxy.
+
+- **etc/nginx/nginx.conf** file is a root config one. 
+
+It different from the default file by only one string
+
+```nginx
+# default file
+include /etc/nginx/conf.d/*.conf;
+# project file
+include /etc/nginx/conf.d/sites-enabled/*.conf;
+```
+The string includes symlinks from a **sites-enabled** folder
+
+- **etc/nginx/conf.d/sites-enabled/** is place to put symlinks to config files from **sites-available** folder
+
+- **etc/nginx/conf.d/sites-available/** folder contains config files for redirecting the request to the appropriate
+application behind the proxy. You nave to create them. They have strings to include files:
+
+    * **etc/nginx/conf.d/common.conf**, 
+    * **etc/nginx/conf.d/common_location.conf**, 
+    * **etc/nginx/conf.d/ssl.conf**
+
+```nginx
+# config file to redirect request (myapp_1.conf)
+
+# name upstream block as you like, I named example
+upstream myapp_1 {
+  # server is a nginx container name of your myapp_1
+  server        myapp_1_nginx;
+}
+
+server {
+  listen        443 ssl;
+  # server_name is a localhost domain from /etc/hosts file
+  server_name   myapp_1.local;
+  include       /etc/nginx/conf.d/common.conf;
+  include       /etc/nginx/conf.d/ssl.conf;
+
+  location / {
+    # proxy pass is "http://" + upstream block (look at first string of the file)
+    proxy_pass  http://myapp_1;
+    include     /etc/nginx/conf.d/common_location.conf;
+  }
+}
+```
+
+
 ## What is a reverse proxy
 Let's start with the concept of a reverse proxy. A reverse proxy server is a server that sits in front 
 of multiple web servers of apps, sites and services and forwards client requests to those web servers. Let say
@@ -64,21 +113,7 @@ the appropriate web server, then return answer to your browser. Next time you se
 **site_2.local** and reverse proxy forwards the request to different appropriate web server. Reverse proxy can 
 provide a HTTPS protocol and localhost SSL certificates
 
-## How is it working
-Look at these folders and files. I didn't want to deal with the long name **nginx-revers-proxy** and renamed it 
-just **reverse**
 
-Our **docker-compose.yml** file defines and runs the nginx reverse proxy. Let's look at the 
-**docker-compose.yml**. I use Nginx image from DockerHub to create a docker container. The nginx reverse proxy
-listens tipical ports:"80" and "443". Config files forward from host to container by volumes. SSL certificates 
-forward from host to container by volumes too.
-
-Let's look at config files. A whole config file was broken down into parts. It was made to select reused 
-blocks, to put them in separate files and then just to include them where it needed. Here a list of these 
-files:
-
-- common.conf
-- common_location.conf
 - ssl.conf
 
 The general config file is a **etc/nginx/nginx.conf**. The most important string here is 

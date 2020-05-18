@@ -1,0 +1,21 @@
+# For example you have:
+#   nginx container name of the service
+#   where to redirect:                       MyApp_nginx
+#   local domen name (from /etc/hosts):      myapp.local
+#   you decided to name the upstream block:  MyApp
+
+upstream MyApp {
+  server        MyApp_nginx;
+}
+
+server {
+  listen        443 ssl;
+  server_name   myapp.local;
+  include       /etc/nginx/conf.d/common.conf;
+  include       /etc/nginx/conf.d/ssl.conf;
+
+  location / {
+    proxy_pass  http://MyApp; # "MyApp" is upstream block name
+    include     /etc/nginx/conf.d/common_location.conf;
+  }
+}

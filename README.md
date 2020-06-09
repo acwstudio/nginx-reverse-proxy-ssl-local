@@ -15,5 +15,5 @@ You should have:
 - **etc/hosts** file has to have "127.0.0.1  your.local.domain" records
 
 see
-[link to description!](https://acwstudio.github.io/reverse-proxy-local.html)
+[link to description!](https://acwstudio.github.io/nginx-reverse-proxy.html)
  
